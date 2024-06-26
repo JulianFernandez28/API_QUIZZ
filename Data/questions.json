@@ -1,0 +1,107 @@
+[
+  {
+    "question": "¿Cuál es el lenguaje de programación más popular?",
+    "options": [ "Python", "JavaScript", "Java", "C++" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Qué significa HTML?",
+    "options": [
+      "HyperText Machine Language",
+      "HyperText Markup Language",
+      "HyperText Modeling Language",
+      "HyperText Management Language"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el método utilizado para imprimir en la consola en JavaScript?",
+    "options": [ "print()", "console.log()", "log()", "display()" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el símbolo utilizado para asignar un valor a una variable en JavaScript?",
+    "options": [ "==", "=", "===", ":=" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el resultado de 2 + '2' en JavaScript?",
+    "options": [ "4", "NaN", "22", "Error" ],
+    "answer": 2
+  },
+  {
+    "question": "¿Cuál es el método utilizado para agregar un elemento al final de un array en JavaScript?",
+    "options": [ "add()", "push()", "append()", "insert()" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el operador utilizado para concatenar dos strings en JavaScript?",
+    "options": [ "-", "+", "*", "/" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el resultado de typeof null en JavaScript?",
+    "options": [ "null", "object", "undefined", "string" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el método utilizado para convertir una cadena a minúsculas en JavaScript?",
+    "options": [ "toUpperCase()", "toLowerCase()", "toLower()", "toUpper()" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el operador utilizado para comparar dos valores en JavaScript?",
+    "options": [ "===", "==", "!=", "!==" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el resultado de 10 % 3 en JavaScript?",
+    "options": [ "3", "1", "0", "10" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el método utilizado para obtener la longitud de un array en JavaScript?",
+    "options": [ "size", "length", "count", "sizeOf" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el operador utilizado para incrementar el valor de una variable en JavaScript?",
+    "options": [ "+=", "++", "--", "-=" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el resultado de '5' - 3 en JavaScript?",
+    "options": [ "8", "2", "NaN", "Error" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el método utilizado para convertir una cadena a un número entero en JavaScript?",
+    "options": [ "parseFloat()", "parseInt()", "toInteger()", "toNumber()" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el operador utilizado para concatenar dos arrays en JavaScript?",
+    "options": [ "join()", "concat()", "merge()", "combine()" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el resultado de typeof undefined en JavaScript?",
+    "options": [ "null", "undefined", "object", "string" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el método utilizado para eliminar el último elemento de un array en JavaScript?",
+    "options": [ "remove()", "pop()", "delete()", "shift()" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el operador utilizado para obtener el residuo de una división en JavaScript?",
+    "options": [ "/", "%", "*", "-" ],
+    "answer": 1
+  },
+  {
+    "question": "¿Cuál es el resultado de '10' == 10 en JavaScript?",
+    "options": [ "false", "true", "undefined", "Error" ],
+    "answer": 1
+  }
+]
