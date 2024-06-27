@@ -2,7 +2,7 @@
 {
     public class Response
     {
-        public string QuestionText { get; set; }
+        public string QuestionId { get; set; }
         public int UserAnswer { get; set; }
         public string UserId { get; set; }
     }

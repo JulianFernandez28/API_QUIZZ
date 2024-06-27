@@ -2,7 +2,8 @@
   {
     "question": "¿Cuál es el lenguaje de programación más popular?",
     "options": [ "Python", "JavaScript", "Java", "C++" ],
-    "answer": 1
+    "answer": 1,
+    "id": "65e542e2-0301-4984-a33b-5165d837ed99"
   },
   {
     "question": "¿Qué significa HTML?",
@@ -12,96 +13,116 @@
       "HyperText Modeling Language",
       "HyperText Management Language"
     ],
-    "answer": 1
+    "answer": 1,
+    "id": "f5318698-a698-4181-b9c0-3ee4d572ed24"
   },
   {
     "question": "¿Cuál es el método utilizado para imprimir en la consola en JavaScript?",
     "options": [ "print()", "console.log()", "log()", "display()" ],
-    "answer": 1
+    "answer": 1,
+    "id": "9eb7d349-78f3-44bb-8e37-00ed21cb3c73"
   },
   {
     "question": "¿Cuál es el símbolo utilizado para asignar un valor a una variable en JavaScript?",
     "options": [ "==", "=", "===", ":=" ],
-    "answer": 1
+    "answer": 1,
+    "id": "f23b0ee4-27e4-49da-a727-932de5c28d9f"
   },
   {
     "question": "¿Cuál es el resultado de 2 + '2' en JavaScript?",
     "options": [ "4", "NaN", "22", "Error" ],
-    "answer": 2
+    "answer": 2,
+    "id": "ff79392c-8856-4540-aa10-f309c21fc103"
   },
   {
     "question": "¿Cuál es el método utilizado para agregar un elemento al final de un array en JavaScript?",
     "options": [ "add()", "push()", "append()", "insert()" ],
-    "answer": 1
+    "answer": 1,
+    "id": "16c427cd-58aa-49b5-b2d0-0ec13406be29"
   },
   {
     "question": "¿Cuál es el operador utilizado para concatenar dos strings en JavaScript?",
     "options": [ "-", "+", "*", "/" ],
-    "answer": 1
+    "answer": 1,
+    "id": "198ce6b0-08ee-40b7-b63c-1f475016490f"
   },
   {
     "question": "¿Cuál es el resultado de typeof null en JavaScript?",
     "options": [ "null", "object", "undefined", "string" ],
-    "answer": 1
+    "answer": 1,
+    "id": "28f3c6b4-3d16-4915-bdfd-9fbb2e2e9b0b"
   },
   {
     "question": "¿Cuál es el método utilizado para convertir una cadena a minúsculas en JavaScript?",
     "options": [ "toUpperCase()", "toLowerCase()", "toLower()", "toUpper()" ],
-    "answer": 1
+    "answer": 1,
+    "id": "c0b00fa0-1a16-4b6e-b41d-9c1e6d90edb3"
   },
   {
     "question": "¿Cuál es el operador utilizado para comparar dos valores en JavaScript?",
     "options": [ "===", "==", "!=", "!==" ],
-    "answer": 1
+    "answer": 1,
+    "id": "4c202ded-06e5-4a8f-a34d-cc48e814c973"
   },
   {
     "question": "¿Cuál es el resultado de 10 % 3 en JavaScript?",
     "options": [ "3", "1", "0", "10" ],
-    "answer": 1
+    "answer": 1,
+    "id": "269e9ec3-7982-4ae4-9d52-51a1d0c053f7"
   },
   {
     "question": "¿Cuál es el método utilizado para obtener la longitud de un array en JavaScript?",
     "options": [ "size", "length", "count", "sizeOf" ],
-    "answer": 1
+    "answer": 1,
+    "id": "df43d403-1271-47c0-998d-31700683254f"
   },
   {
     "question": "¿Cuál es el operador utilizado para incrementar el valor de una variable en JavaScript?",
     "options": [ "+=", "++", "--", "-=" ],
-    "answer": 1
+    "answer": 1,
+    "id": "feb4b7f3-13a9-48a3-ad90-86b66ca8be60"
   },
   {
     "question": "¿Cuál es el resultado de '5' - 3 en JavaScript?",
     "options": [ "8", "2", "NaN", "Error" ],
-    "answer": 1
+    "answer": 1,
+    "id": "b2ce227d-b870-4ac1-bb63-6e460aaf914d"
   },
   {
     "question": "¿Cuál es el método utilizado para convertir una cadena a un número entero en JavaScript?",
     "options": [ "parseFloat()", "parseInt()", "toInteger()", "toNumber()" ],
-    "answer": 1
+    "answer": 1,
+    "id": "c2361337-5e8b-497e-8951-89b688e267ce"
   },
   {
     "question": "¿Cuál es el operador utilizado para concatenar dos arrays en JavaScript?",
     "options": [ "join()", "concat()", "merge()", "combine()" ],
-    "answer": 1
+    "answer": 1,
+    "id": "af1b780f-037f-4f2a-96c1-c17c04893210"
   },
   {
     "question": "¿Cuál es el resultado de typeof undefined en JavaScript?",
     "options": [ "null", "undefined", "object", "string" ],
-    "answer": 1
+    "answer": 1,
+    "id": "5423ea11-b5c5-44bb-ab0b-c29ee7dd2314"
   },
   {
     "question": "¿Cuál es el método utilizado para eliminar el último elemento de un array en JavaScript?",
     "options": [ "remove()", "pop()", "delete()", "shift()" ],
-    "answer": 1
+    "answer": 1,
+    "id": "78391e66-ac4f-44dc-921f-77578ec1186c"
   },
   {
     "question": "¿Cuál es el operador utilizado para obtener el residuo de una división en JavaScript?",
     "options": [ "/", "%", "*", "-" ],
-    "answer": 1
+    "answer": 1,
+    "id": "bcf86168-68e4-43e2-bf01-9e981c50af79"
   },
   {
     "question": "¿Cuál es el resultado de '10' == 10 en JavaScript?",
     "options": [ "false", "true", "undefined", "Error" ],
-    "answer": 1
+    "answer": 1,
+    "id": "f48376c6-eb2c-4c5f-adb9-19dc7adf49a1"
   }
 ]
+

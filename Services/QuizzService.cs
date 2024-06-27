@@ -96,7 +96,7 @@ namespace API_QUIZZ.Services
 
             await File.WriteAllTextAsync(Path.Combine(dataPath, "responses.json"),JsonConvert.SerializeObject(_response));
 
-            var question = _questions.Find(q => q.Question == response.QuestionText);
+            var question = _questions.Find(q => q.Id == response.QuestionId);
 
             if(question != null && question.Answer == response.UserAnswer)
             {

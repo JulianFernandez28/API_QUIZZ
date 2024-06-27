@@ -37,4 +37,3 @@ C:\Users\ferna\OneDrive\Documents\UTM\9no cuatri\web progresiva\Quizz\API_QUIZZ\
 C:\Users\ferna\OneDrive\Documents\UTM\9no cuatri\web progresiva\Quizz\API_QUIZZ\obj\Debug\net7.0\ref\API_QUIZZ.dll
 C:\Users\ferna\OneDrive\Documents\UTM\9no cuatri\web progresiva\Quizz\API_QUIZZ\bin\Debug\net7.0\Data\responses.json
 C:\Users\ferna\OneDrive\Documents\UTM\9no cuatri\web progresiva\Quizz\API_QUIZZ\bin\Debug\net7.0\Data\users.json
-C:\Users\ferna\OneDrive\Documents\UTM\9no cuatri\web progresiva\Quizz\API_QUIZZ\bin\Debug\net7.0\Data\response.json
