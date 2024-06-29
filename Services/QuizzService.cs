@@ -46,7 +46,7 @@ namespace API_QUIZZ.Services
             }
             else
             {
-                var json = File.ReadAllText(Path.Combine(dataPath, "response.json"));
+                var json = File.ReadAllText(Path.Combine(dataPath, "responses.json"));
                 _response = JsonConvert.DeserializeObject<List<Response>>(json);
                 if (_response is null)
                 {
