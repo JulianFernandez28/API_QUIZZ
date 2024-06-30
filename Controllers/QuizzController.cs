@@ -149,6 +149,12 @@ namespace API_QUIZZ.Controllers
             
             try
             {
+                if(string.IsNullOrEmpty(newUser.Name)){
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.ErrorMessages.Add("El campo name no puede ser vacio");
+                    _response.IsExitoso = true;
+                    return BadRequest(_response);
+                }
                 var user = _mapper.Map<User>(newUser);
 
                 if (user is null)
@@ -225,75 +231,6 @@ namespace API_QUIZZ.Controllers
 
             return _response;
         }
-
-
-
-        /*//https://localhost:7169/api/Quizz/questions
-        [HttpGet("questions")]
-
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<APIResponse> Get()
-        {
-            try
-            {
-                _response.Resultado =  _quizzService.GetQuestions();
-                _response.StatusCode = HttpStatusCode.OK;
-            }
-            catch (Exception ex)
-            {
-
-               _response.IsExitoso = false;
-                _response.ErrorMessages = new List<string> { ex.Message };
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-
-            }
-
-            return Ok(_response);
-        }
-
-        //https://localhost:7169/api/Quizz/response
-        [HttpPost("response")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> Post([FromBody] Response response)
-        {
-            try
-            {
-                if (response is null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsExitoso =false;
-                    _response.ErrorMessages.Add("Error al cargar la respuesta");
-                }
-                var answer = await _quizzService.SaveResponse(response);
-
-                if (!answer)
-                {
-                    _response.StatusCode = HttpStatusCode.OK;
-                    _response.Resultado = "Wrong";
-                    _response.IsExitoso = false;
-                    return _response;
-                }
-                _response.Resultado = "Well Done!";
-                _response.StatusCode = HttpStatusCode.OK;
-            }
-            catch (Exception ex)
-            {
-
-                _response.IsExitoso=false;
-                _response.ErrorMessages = new List<string> { ex.Message};
-                _response.StatusCode=HttpStatusCode.InternalServerError;
-            }
-
-            return Ok(_response);
-        }
-
-
-        
-        
-
-
-        
-        }*/
 
     }
 }
