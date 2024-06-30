@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "JY3JgDWqBth+JB4trbgVFp/UbNhgBDUpDnoKxat4T1BPBelDnyEH8cUp8erdyBKOS4zIkdmGJyG8n43bLBpmJA==",
+  "dgSpecHash": "z6SD1rnBYx9a5qMgXeWUCJNGuwkqqi1KSMFyvgFB9CB0G+UN7WYWHjBY7QGQZz2F5hZ8BMf5hZiNuVlZmrRiLg==",
   "success": true,
   "projectFilePath": "C:\\Users\\ferna\\OneDrive\\Documents\\UTM\\9no cuatri\\web progresiva\\Quizz\\API_QUIZZ\\API_QUIZZ.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\ferna\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\ferna\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\ferna\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\ferna\\.nuget\\packages\\k4os.compression.lz4\\1.2.6\\k4os.compression.lz4.1.2.6.nupkg.sha512",

@@ -3,133 +3,97 @@
 using API_QUIZZ.Models;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using API_QUIZZ.Services.IServices;
+using API_QUIZZ.Data;
+using AutoMapper;
+using API_QUIZZ.Models.Dtos;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace API_QUIZZ.Services
 {
-    public class QuizzService
+    public class QuizzService:IQuizzService
     {
-        private static string dataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data");
+        private readonly ApplicationDbContext _context;
 
-        private static List<Questions> _questions;
-        private static List<Response> _response;
-        private static List<User> _users;
 
-        public QuizzService()
+        public QuizzService(ApplicationDbContext context)
         {
-            if(!Directory.Exists(dataPath))
-            {
-                Directory.CreateDirectory(dataPath);
-
-            }
-
-            if(!File.Exists(Path.Combine(dataPath, "questions.json"))) 
-            {
-                File.Create(Path.Combine(dataPath, "questions.json")).Close();
-                _questions = new List<Questions>();
-
-            }
-            else
-            {
-                var json = File.ReadAllText(Path.Combine(dataPath, "questions.json"));
-                _questions =  JsonConvert.DeserializeObject<List<Questions>>(json);
-                if (_questions is null)
-                {
-                    _questions = new List<Questions>();
-                }
-            }
-
-            if (!File.Exists(Path.Combine(dataPath, "responses.json")))
-            {
-                File.Create(Path.Combine(dataPath, "responses.json")).Close();
-                _response = new List<Response>();
-
-            }
-            else
-            {
-                var json = File.ReadAllText(Path.Combine(dataPath, "responses.json"));
-                _response = JsonConvert.DeserializeObject<List<Response>>(json);
-                if (_response is null)
-                {
-                    _response = new List<Response>();
-                }
-            }
-
-            if (!File.Exists(Path.Combine(dataPath, "users.json")))
-            {
-                File.Create(Path.Combine(dataPath, "users.json")).Close();
-                _users = new List<User>();
-
-            }
-            else
-            {
-                var json = File.ReadAllText(Path.Combine(dataPath, "users.json"));
-                _users = JsonConvert.DeserializeObject<List<User>>(json);
-                if (_users is null)
-                {
-                    _users = new List<User>();
-                }
-           
-            }
+            _context = context;
         }
 
 
-        public  IEnumerable<Questions> GetQuestions()
+        public async Task<Questions> CreateQuestion(Questions question)
+        {
+            question.Id = Guid.NewGuid().ToString();
+            _context.Questions.Add(question);
+            await _context.SaveChangesAsync();
+
+            return question;
+        }
+
+        public async Task<IEnumerable<Questions>> GetQuestions()
         {
             var random = new Random();
 
-            return   _questions.OrderBy(q => random.Next()).Take(10).ToList();
-        }
+            IEnumerable<Questions> list = await _context.Questions.ToListAsync();
 
-        public User GetUser(string id)
-        {
-            return _users.FirstOrDefault(u => u.Id.Equals(id));
-        }
+            IEnumerable<Questions> listRandom = list.OrderBy(q => random.Next()).Take(10);
 
-        public List<User> GetUsers()
+            return listRandom;
+
+        }
+        
+        public async Task<Questions> GetQuestion(string id)
         {
-            return _users.OrderByDescending(u => u.Score).ToList();
+            Questions question = await _context.Questions.FirstOrDefaultAsync(q => q.Id == id);
+            return question;
         }
 
         public async Task<bool> SaveResponse(Response response)
         {
-            _response.Add(response);
 
-            await File.WriteAllTextAsync(Path.Combine(dataPath, "responses.json"),JsonConvert.SerializeObject(_response));
+            await _context.Responses.AddAsync(response);
 
-            var question = _questions.Find(q => q.Id == response.QuestionId);
+            Questions question = await GetQuestion(response.QuestionId);
 
-            if(question != null && question.Answer == response.UserAnswer)
+          
+            if (question.Answer == response.UserAnswer)
             {
-                var user = _users.Find( u => u.Id == response.UserId );
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == response.UserId);
+                user.Score++;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                return true;
 
-                if(user != null)
-                {
-                    user.Score++;
-                    await File.WriteAllTextAsync(Path.Combine(dataPath,"users.json"), JsonConvert.SerializeObject(_users));
-                    return true;
-                }
             }
-
+               
+            await _context.SaveChangesAsync();
             return false;
 
         }
 
-        public async Task SaveUser(UserDTO user)
+        public async Task<User> SaveUser(User user)
         {
-            User newUser = new User()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = user.Name,
-                Score = 0
-            };
+            user.Id = Guid.NewGuid().ToString();
 
-            
-            
-            _users.Add(newUser);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            await File.WriteAllTextAsync(Path.Combine(dataPath, "users.json"), JsonConvert.SerializeObject(_users));
+            return user;
+
         }
 
+        public Task<User> GetUser(string id)
+        {
+            var user = _context.Users.FirstOrDefaultAsync( u => u.Id == id);
 
+            return user;
+        }
+
+        public async Task<IEnumerable<User>> GetUsers()
+        {
+            IEnumerable<User> listUser = await _context.Users.ToListAsync();
+            return listUser;
+        }
     }
 }

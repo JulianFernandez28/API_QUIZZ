@@ -1,6 +1,9 @@
 ﻿using API_QUIZZ.Data;
 using API_QUIZZ.Models;
+using API_QUIZZ.Models.Dtos;
 using API_QUIZZ.Services;
+using API_QUIZZ.Services.IServices;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -16,34 +19,49 @@ namespace API_QUIZZ.Controllers
     [ApiController]
     public class QuizzController : ControllerBase
     {
-        private QuizzService _quizzService;
+        
         private APIResponse _response;
         private readonly ApplicationDbContext _context;
+        private readonly IQuizzService _quizzService;
+        private readonly IMapper _mapper;
 
 
-        public QuizzController(ApplicationDbContext context)
+        public QuizzController(ApplicationDbContext context, IMapper mapper, IQuizzService quizzService)
         {
-            _quizzService = new QuizzService();
+
             _response = new APIResponse();
             _context = context;
+            _mapper = mapper;
+            _quizzService = quizzService;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Questions>> Post(Questions questions)
+        public async Task<ActionResult<APIResponse>> Post(Questions questions)
         {
             try
             {
-                _context.Questions.Add(questions);
-                await _context.SaveChangesAsync();
+                if (questions == null)
+                {
+                    _response.IsExitoso= false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.ErrorMessages.Add("La pregunta no puede estar vacia");
                     
-                return Ok(questions);
+                    return BadRequest(_response);
+                }
+
+                _response.Resultado = await _quizzService.CreateQuestion(questions);
+                _response.StatusCode = HttpStatusCode.OK;
 
             }
             catch (Exception ex)
             {
 
-                return BadRequest(ex.Message);
+                _response.IsExitoso= false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
             }
+
+            return _response;
         }
 
         [HttpGet]
@@ -55,106 +73,157 @@ namespace API_QUIZZ.Controllers
         }
 
         [HttpGet("questions")]
-        public async Task<ActionResult<IEnumerable<Questions>>> GetRandom()
+        public async Task<ActionResult<APIResponse>> GetRandom()
         {
-            var random = new Random();
+            try
+            {
+                var ListQuestion = await _quizzService.GetQuestions();
 
-            IEnumerable<Questions> list = await _context.Questions.ToListAsync();
+                _response.Resultado = _mapper.Map<IEnumerable<QuestionDto>>(ListQuestion);
+                _response.StatusCode = HttpStatusCode.OK;
 
-            IEnumerable<Questions> listRandom = list.OrderBy(q => random.Next()).Take(10);
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
 
-            return Ok(listRandom);
+                _response.IsExitoso = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.StatusCode= HttpStatusCode.InternalServerError;
+               
+            }
+            return _response;
         }
 
         [HttpPost("response")]
-        public  async Task<ActionResult<Response>> PostQuestion(Response response)
+        public  async Task<ActionResult<APIResponse>> PostQuestion([FromBody]ResponseCreateDto  responseDto)
         {
             try
             {
-                var question = await _context.Questions.FirstOrDefaultAsync(q => q.Id == response.QuestionId);
+
+                var response = _mapper.Map<Response>(responseDto);
+
+                var question = await _quizzService.GetQuestion(responseDto.QuestionId);
 
                 if (question is null)
                 {
-                    return BadRequest("Pregunta no encontrada");
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsExitoso=false;
+                    return NotFound(_response);
                 }
 
-                User user = await _context.Users.FirstOrDefaultAsync( u => u.Id == response.UserId);
+                var answer = await _quizzService.SaveResponse(response);
 
-                if(user is null)
+                if (!answer)
                 {
-                    return BadRequest("Usuario no existe");
+                    _response.StatusCode = HttpStatusCode.OK;
+                    _response.Resultado = "Wrong";
+                    _response.IsExitoso = false;
+                    return _response;
                 }
-
-                if (question.Answer == response.UserAnswer)
-                {
-                    user.Score++;
-                }
-                await _context.Responses.AddAsync(response);
-                _context.Users.Update(user);
-                await _context.SaveChangesAsync();
-
-                return Ok(response);
+                _response.Resultado = "Well Done!";
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
 
             }
             catch (Exception ex)
             {
 
-                return BadRequest(ex.ToString());
+                _response.IsExitoso = false;
+                _response.ErrorMessages = new List<string> { ex.ToString() };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
             }
+
+
+            return _response;
 
             
         }
 
+        //https://localhost:7169/api/Quizz/user
         [HttpPost("user")]
-        public async Task<ActionResult<User>> PostUser(User newUser)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> PostUser([FromBody] UserDto newUser)
         {
+            
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == newUser.Name);
+                var user = _mapper.Map<User>(newUser);
 
-                if(user != null )
+                if (user is null)
                 {
-                    return BadRequest("Ingrese otro nombre");
+                    _response.IsExitoso = false;
+                    _response.ErrorMessages.Add("Error al cargar el usuario");
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
                 }
 
-                newUser.Id = Guid.NewGuid().ToString();
-
-                _context.Users.Add(newUser);
-                await _context.SaveChangesAsync();
-
-
-                return Ok(newUser);
-                
+                _response.Resultado =await _quizzService.SaveUser(user);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
             }
             catch (Exception ex)
             {
 
-                return BadRequest(ex.ToString());
+                _response.IsExitoso = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
             }
-            
+
+            return _response;
         }
 
-        [HttpGet("alluser")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
 
+
+        //https://localhost:7169/api/Quizz/allUser
+        [HttpGet("allUser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<APIResponse>> GetUsers()
+        {
             try
             {
-                IEnumerable<User> listUser = await _context.Users.ToListAsync();
+                _response.Resultado = await _quizzService.GetUsers();
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsExitoso = false;
+                _response.ErrorMessages = new List<string> { ex.Message };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+               
+            }
 
-                if (listUser is null)
-                {
-                    return BadRequest("Lista vacia");
-                }
+            return _response;
+        }
 
-                return Ok(listUser);
+        //https://localhost:7169/api/Quizz/user/ + "id"
+        [HttpGet("user/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<APIResponse>> Get(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                _response.IsExitoso = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add($"El id: {id} es incorrecto");
+            }
+            try
+            {
+                _response.Resultado = await _quizzService.GetUser(id);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
             }
             catch (Exception ex)
             {
 
-                return BadRequest(ex.ToString());
+                _response.IsExitoso = false;
+                _response.ErrorMessages = new List<string>() { ex.Message };
+                _response.StatusCode = HttpStatusCode.InternalServerError;
             }
-            
+
+            return _response;
         }
 
 
@@ -219,83 +288,11 @@ namespace API_QUIZZ.Controllers
         }
 
 
-        //https://localhost:7169/api/Quizz/user
-        [HttpPost("user")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> PostUser([FromBody] UserDTO user)
-        {
-            if(user is null)
-            {
-                _response.IsExitoso = false;
-                _response.ErrorMessages.Add("Error al cargar el usuario");
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                return BadRequest(_response);
-            }
-            try
-            {
-
-                await _quizzService.SaveUser(user);
-                _response.StatusCode = HttpStatusCode.OK;
-            }
-            catch (Exception ex)
-            {
-
-                _response.IsExitoso =false;
-                _response.ErrorMessages = new List<string>() { ex.Message};
-                _response.StatusCode=HttpStatusCode.InternalServerError;
-            }
-
-            return Ok(_response);
-        }
-        //https://localhost:7169/api/Quizz/user/ + "id"
-        [HttpGet("user")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public  ActionResult<APIResponse> Get(string id)
-        {
-            if(string.IsNullOrEmpty(id))
-            {
-                _response.IsExitoso = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add($"El id: {id} es incorrecto");
-            }
-            try
-            {
-                _response.Resultado = _quizzService.GetUser(id);
-                _response.StatusCode = HttpStatusCode.OK;
-
-            }
-            catch (Exception ex)
-            {
-
-                _response.IsExitoso = false;
-                _response.ErrorMessages=new List<string>() { ex.Message};
-                _response.StatusCode=HttpStatusCode.InternalServerError;
-            }
-
-            return Ok(_response);
-        }
+        
+        
 
 
-        //https://localhost:7169/api/Quizz/allUser
-        [HttpGet("allUser")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<APIResponse> GetUsers()
-        {
-            try
-            {
-                _response.Resultado = _quizzService.GetUsers();
-                _response.StatusCode = HttpStatusCode.OK;
-            }
-            catch (Exception ex)
-            {
-                _response.IsExitoso =false;
-                _response.ErrorMessages = new List<string> { ex.Message};
-                _response.StatusCode=HttpStatusCode.InternalServerError;
-                throw;
-            }
-
-            return Ok(_response);
+        
         }*/
 
     }

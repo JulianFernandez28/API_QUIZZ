@@ -1,4 +1,7 @@
 using API_QUIZZ.Data;
+using API_QUIZZ.Services;
+using API_QUIZZ.Services.IServices;
+using API_QUIZZ.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -15,7 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
+builder.Services.AddAutoMapper(typeof(MappingConfig).Assembly);
+builder.Services.AddScoped<IQuizzService, QuizzService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(options =>
