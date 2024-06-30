@@ -1,11 +1,14 @@
-﻿using API_QUIZZ.Models;
+﻿using API_QUIZZ.Data;
+using API_QUIZZ.Models;
 using API_QUIZZ.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace API_QUIZZ.Controllers
 {
@@ -15,14 +18,148 @@ namespace API_QUIZZ.Controllers
     {
         private QuizzService _quizzService;
         private APIResponse _response;
+        private readonly ApplicationDbContext _context;
 
-        public QuizzController()
+
+        public QuizzController(ApplicationDbContext context)
         {
             _quizzService = new QuizzService();
             _response = new APIResponse();
+            _context = context;
         }
 
-        //https://localhost:7169/api/Quizz/questions
+        [HttpPost]
+        public async Task<ActionResult<Questions>> Post(Questions questions)
+        {
+            try
+            {
+                _context.Questions.Add(questions);
+                await _context.SaveChangesAsync();
+                    
+                return Ok(questions);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Questions>>> Get()
+        {
+            IEnumerable<Questions> list = await _context.Questions.ToListAsync();
+
+            return Ok(list);
+        }
+
+        [HttpGet("questions")]
+        public async Task<ActionResult<IEnumerable<Questions>>> GetRandom()
+        {
+            var random = new Random();
+
+            IEnumerable<Questions> list = await _context.Questions.ToListAsync();
+
+            IEnumerable<Questions> listRandom = list.OrderBy(q => random.Next()).Take(10);
+
+            return Ok(listRandom);
+        }
+
+        [HttpPost("response")]
+        public  async Task<ActionResult<Response>> PostQuestion(Response response)
+        {
+            try
+            {
+                var question = await _context.Questions.FirstOrDefaultAsync(q => q.Id == response.QuestionId);
+
+                if (question is null)
+                {
+                    return BadRequest("Pregunta no encontrada");
+                }
+
+                User user = await _context.Users.FirstOrDefaultAsync( u => u.Id == response.UserId);
+
+                if(user is null)
+                {
+                    return BadRequest("Usuario no existe");
+                }
+
+                if (question.Answer == response.UserAnswer)
+                {
+                    user.Score++;
+                }
+                await _context.Responses.AddAsync(response);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(response);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.ToString());
+            }
+
+            
+        }
+
+        [HttpPost("user")]
+        public async Task<ActionResult<User>> PostUser(User newUser)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == newUser.Name);
+
+                if(user != null )
+                {
+                    return BadRequest("Ingrese otro nombre");
+                }
+
+                newUser.Id = Guid.NewGuid().ToString();
+
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
+
+
+                return Ok(newUser);
+                
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.ToString());
+            }
+            
+        }
+
+        [HttpGet("alluser")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+
+            try
+            {
+                IEnumerable<User> listUser = await _context.Users.ToListAsync();
+
+                if (listUser is null)
+                {
+                    return BadRequest("Lista vacia");
+                }
+
+                return Ok(listUser);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.ToString());
+            }
+            
+        }
+
+
+
+        /*//https://localhost:7169/api/Quizz/questions
         [HttpGet("questions")]
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -159,7 +296,7 @@ namespace API_QUIZZ.Controllers
             }
 
             return Ok(_response);
-        }
+        }*/
 
     }
 }
